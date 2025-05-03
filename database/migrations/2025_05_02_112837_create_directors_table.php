@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('pass');
+            $table->string('password');
             $table->string('profile_img')->nullable();
             $table->string('school_name');
             $table->string('school_code');
-            $table->string('school_email');
+            $table->string('school_email')->unique();
             $table->string('school_tel');
             $table->string('school_type');
             $table->date('membership_start');
