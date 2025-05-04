@@ -42,4 +42,33 @@ class StudentAuthController extends Controller
             'token'   => $token,
         ], 201);
     }
+
+    public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email'    => 'required|string|email',
+        'password' => 'required|string',
+    ],
+    [
+        'email.required' => 'El correo electrónico es obligatorio.',
+        'email.email'    => 'El correo electrónico no es válido.',
+        'password.required' => 'La contraseña es obligatoria.',
+    ]);
+
+    $student = Student::where('email', $credentials['email'])->first();
+
+    if (!$student || !Hash::check($credentials['password'], $student->password)) {
+        return response()->json([
+            'message' => 'Las credenciales no son válidas.',
+        ], 401);
+    }
+
+    $token = $student->createToken('student_token')->plainTextToken;
+
+    return response()->json([
+        'student' => $student,
+        'token'   => $token,
+    ]);
+}
+
 }

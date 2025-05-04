@@ -11,5 +11,6 @@ Route::get('/user', function (Request $request) {
 
 
 Route::post('/register', [StudentAuthController::class, 'register']);
+Route::post('/login', [StudentAuthController::class, 'login']);
 
 Route::post('/directors/register', [DirectorAuthController::class, 'register']);
