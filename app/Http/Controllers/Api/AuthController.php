@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
@@ -29,4 +30,27 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Usuario registrado correctamente', 'user' => $user], 201);
     }
+
+
+
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        }
+
+        $user = Auth::user();
+
+        return response()->json([
+            'message' => 'Login correcto',
+            'user' => $user,
+        ]);
+    }
+
 }
