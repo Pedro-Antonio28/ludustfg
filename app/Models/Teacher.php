@@ -32,6 +32,10 @@ class Teacher extends Model
             'password' => 'hashed',
         ];
     }
+    public function classes()
+    {
+        return $this->hasMany(Classes::class);
+    }
 
 
 

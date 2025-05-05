@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\DirectorAuthController;
-use App\Http\Controllers\Api\StudentAuthController;
+use App\Http\Controllers\Api\Auth\DirectorAuthController;
+use App\Http\Controllers\Api\Auth\StudentAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
