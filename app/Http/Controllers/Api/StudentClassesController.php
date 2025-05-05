@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\StudentClassResource;
 
 class StudentClassesController extends Controller
 {
@@ -12,10 +13,7 @@ class StudentClassesController extends Controller
 
         $classes = $student->classes()->get();
 
-        return response()->json($classes);
+        return StudentClassResource::collection($classes);
 
     }
-
-
-
 }
