@@ -16,6 +16,6 @@ Route::post('/login', [StudentAuthController::class, 'login']);
 
 Route::post('/directors/register', [DirectorAuthController::class, 'register']);
 
-Route::post('/students/dashboard', [StudentClassesController::class, 'dashboard'])
+Route::get('/students/dashboard', [StudentClassesController::class, 'index'])
     ->middleware('auth:sanctum');
 

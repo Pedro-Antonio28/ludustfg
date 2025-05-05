@@ -11,7 +11,7 @@ class StudentClassesController extends Controller
     {
         $student = auth()->user();
 
-        $classes = $student->classes()->get();
+        $classes = $student->schoolClasses()->get();
 
         return StudentClassResource::collection($classes);
 
