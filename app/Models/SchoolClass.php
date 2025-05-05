@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Classes extends Model
+class SchoolClass extends Model
 {
+    use HasFactory;
+    protected $table = 'classes';
     protected $fillable = [
         'name',
         'image_url',
@@ -18,6 +21,6 @@ class Classes extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class);
+        return $this->belongsToMany(Student::class, 'class_student', 'class_id', 'student_id');
     }
 }

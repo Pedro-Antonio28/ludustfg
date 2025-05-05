@@ -35,8 +35,8 @@ class Student extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function classes()
+    public function schoolClasses()
     {
-        return $this->belongsToMany(Classes::class);
+        return $this->belongsToMany(SchoolClass::class);
     }
 }
