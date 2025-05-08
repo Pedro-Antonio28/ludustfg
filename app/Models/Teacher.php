@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Teacher extends Model
 {
-
     protected $fillable = [
         'name',
         'email',
@@ -34,7 +33,7 @@ class Teacher extends Model
     }
     public function classes()
     {
-        return $this->hasMany(Classes::class);
+        return $this->hasMany(SchoolClass::class);
     }
 
 
