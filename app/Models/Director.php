@@ -21,4 +21,6 @@ class Director extends Model
         'school_type',
         'resume_days',
     ];
+
+
 }

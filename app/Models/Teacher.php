@@ -2,15 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
-class Student extends Authenticatable
+class Teacher extends Model
 {
-    use HasFactory, Notifiable, HasApiTokens;
-
     protected $fillable = [
         'name',
         'email',
@@ -28,6 +23,7 @@ class Student extends Authenticatable
      *
      * @return array<string, string>
      */
+
     protected function casts(): array
     {
         return [
@@ -35,8 +31,11 @@ class Student extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function schoolClasses()
+    public function classes()
     {
-        return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id');
+        return $this->hasMany(SchoolClass::class);
     }
+
+
+
 }
