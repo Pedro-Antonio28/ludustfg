@@ -34,7 +34,7 @@ class Teacher extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function classes()
+    public function schoolClasses()
     {
         return $this->hasMany(SchoolClass::class);
     }

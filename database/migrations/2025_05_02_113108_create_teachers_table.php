@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('pass');
+            $table->string('password');
             $table->string('profile_img')->nullable();
             $table->foreignId('director_id')->nullable()->constrained('directors')->nullOnDelete();
             $table->timestamps();
