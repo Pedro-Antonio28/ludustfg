@@ -37,6 +37,12 @@ class DirectorAuthController extends Controller
             'resume_days'  => $validated['resume_days'] ?? 0,
         ]);
 
-        return response()->json(['message' => 'Director registrado correctamente', 'director' => $director], 201);
+        $token = $director->createToken('director_token')->plainTextToken;
+
+        return response()->json([
+            'user' => $director,
+            'token'   => $token,
+            'role' => 'director'
+        ], 201);
     }
 }

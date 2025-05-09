@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
 
-class TeacherClassesController extends Controller
+class ClassesController extends Controller
 {
     public function index()
     {
-        $teacher = auth()->user();
+        $student = auth()->user();
 
-        $classes = $teacher->schoolClasses()->get();
+        $classes = $student->schoolClasses()->get();
 
         return StudentClassResource::collection($classes);
+
     }
 }

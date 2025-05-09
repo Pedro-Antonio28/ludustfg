@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Student;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class StudentAuthController extends Controller
+class TeacherAuthController extends Controller
 {
     public function register(Request $request)
     {
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:students,email',
+            'email'    => 'required|string|email|max:255|unique:teacher,email',
             'password' => 'required|string|min:6|confirmed',
             'profile_img' => 'nullable|string|max:255',
         ],
         [
-            'name.required' => 'El nombre es obligatorio.',
+            'name.required' => 'El nombre es obligatorio.', 
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico no es válido.',
             'email.unique' => 'Este correo ya está registrado.',
@@ -28,19 +28,19 @@ class StudentAuthController extends Controller
         ]
     );
 
-        $student = Student::create([
+        $teacher = Teacher::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'profile_img' => $validated['profile_img'] ?? null,
         ]);
 
-        $token = $student->createToken('student_token')->plainTextToken;
+        $token = $teacher->createToken('teacher_token')->plainTextToken;
 
         return response()->json([
-            'user' => $student,
+            'user' => $teacher,
             'token'   => $token,
-            'role' => 'student'
+            'role' => 'teacher'
         ], 201);
     }
 
@@ -56,21 +56,20 @@ class StudentAuthController extends Controller
         'password.required' => 'La contraseña es obligatoria.',
     ]);
 
-    $student = Student::where('email', $credentials['email'])->first();
+    $teacher = Teacher::where('email', $credentials['email'])->first();
 
-    if (!$student || !Hash::check($credentials['password'], $student->password)) {
+    if (!$teacher || !Hash::check($credentials['password'], $teacher->password)) {
         return response()->json([
             'message' => 'Las credenciales no son válidas.',
         ], 401);
     }
 
-    $token = $student->createToken('student_token')->plainTextToken;
+    $token = $teacher->createToken('teacher_token')->plainTextToken;
 
     return response()->json([
-        'user' => $student,
+        'user' => $teacher,
         'token'   => $token,
-        'role' => 'student'
+        'role' => 'teacher'
     ]);
 }
-
 }
