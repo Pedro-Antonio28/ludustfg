@@ -16,4 +16,8 @@ class ClassesController extends Controller
         return StudentClassResource::collection($classes);
 
     }
+
+
+
+
 }

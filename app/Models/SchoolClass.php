@@ -23,4 +23,10 @@ class SchoolClass extends Model
     {
         return $this->belongsToMany(Student::class, 'class_student', 'class_id', 'student_id');
     }
+
+    public function tests()
+    {
+        return $this->hasMany(Test::class, 'class_id');
+    }
+
 }
