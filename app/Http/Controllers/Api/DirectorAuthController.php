@@ -21,7 +21,7 @@ class DirectorAuthController extends Controller
             'school_email' => 'required|email|unique:directors,school_email',
             'school_tel'   => 'required|string',
             'school_type'  => 'required|string',
-            'resume_days'  => 'nullable|integer|min:0',
+            'membership_start'  => 'nullable|date',
         ]);
 
         $director = Director::create([
@@ -34,7 +34,7 @@ class DirectorAuthController extends Controller
             'school_email' => $validated['school_email'],
             'school_tel'   => $validated['school_tel'],
             'school_type'  => $validated['school_type'],
-            'resume_days'  => $validated['resume_days'] ?? 0,
+            'membership_start'  => $validated['membership_start'] ?? 0,
         ]);
 
         return response()->json(['message' => 'Director registrado correctamente', 'director' => $director], 201);

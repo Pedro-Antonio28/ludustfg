@@ -19,6 +19,6 @@ class Director extends Model
         'school_email',
         'school_tel',
         'school_type',
-        'resume_days',
+        'membership_start',
     ];
 }
