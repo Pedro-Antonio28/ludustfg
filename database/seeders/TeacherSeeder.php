@@ -19,7 +19,7 @@ class TeacherSeeder extends Seeder
         Teacher::create([
             'name' => 'Laura Gómez',
             'email' => 'laura@escuela.com',
-            'pass' => Hash::make('password'),
+            'password' => Hash::make('password'),
             'profile_img' => null,
             'director_id' => $director->id,
         ]);
