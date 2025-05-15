@@ -16,6 +16,7 @@ return new class extends Migration
             $table->json('answer');
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('question_id')->constrained('questions')->cascadeOnDelete();
+            $table->double('mark')->nullable();
             $table->timestamps();
         });
         
