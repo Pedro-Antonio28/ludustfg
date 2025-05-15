@@ -12,13 +12,7 @@ class TestsTableSeeder extends Seeder
 {
     public function run(): void
     {
-        // Asegúrate de tener al menos una clase creada
         $class = SchoolClass::first();
-
-        if (!$class) {
-            $this->command->warn('No hay clases en la base de datos. Crea una clase primero.');
-            return;
-        }
 
         $tests = [
             [
@@ -46,7 +40,5 @@ class TestsTableSeeder extends Seeder
         foreach ($tests as $test) {
             Test::create(array_merge($test, ['class_id' => $class->id]));
         }
-
-        $this->command->info('Exámenes de prueba creados para la clase con ID ' . $class->id);
     }
 }
