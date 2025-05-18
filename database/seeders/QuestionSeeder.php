@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Question;
+use App\Models\Test;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,7 @@ class QuestionSeeder extends Seeder
      */
     public function run(): void
     {
+        $tests = Test::all();
         $questions = [
             [
                 'name' => '¿Cuál es la capital de Francia?',
@@ -77,11 +79,12 @@ class QuestionSeeder extends Seeder
             ],
         ];
 
-        foreach ($questions as $q) {
+        foreach ($questions as $index => $q) {
+            $test = $tests[$index % $tests->count()]; // Distribuir equitativamente
             Question::create([
                 'name' => $q['name'],
                 'teacher_id' => 1,
-                'test_id' => null,
+                'test_id' => $test->id,
                 'type' => $q['type'],
                 'mark' => $q['mark'],
                 'answer' => $q['answer'],
