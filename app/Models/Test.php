@@ -20,4 +20,9 @@ public function class()
 {
 return $this->belongsTo(SchoolClass::class, 'class_id');
 }
+
+public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }

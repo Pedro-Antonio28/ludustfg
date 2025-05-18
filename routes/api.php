@@ -28,6 +28,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':student',])->group(function () {
     Route::get('/dashboard', [SClassesController::class, 'index']);
+    Route::get('/class/{classId}/results',[SClassesController::class, 'results']);
 });
 
 Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher',])->group(function () {

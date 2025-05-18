@@ -21,4 +21,9 @@ class Question extends Model
     protected $casts = [
         'answer' => 'array',
     ];
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class);
+    }
 }
