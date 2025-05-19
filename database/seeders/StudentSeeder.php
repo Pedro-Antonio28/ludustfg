@@ -16,8 +16,25 @@ class StudentSeeder extends Seeder
         $classes = SchoolClass::all();
 
         foreach ($classes as $class) {
+            // Crea 2 estudiantes por clase
             $students = Student::factory()->count(2)->create();
+
+            // Asocia a la clase
             $class->students()->attach($students->pluck('id')->toArray());
+
         }
+
+        // Crear alumno manual para pruebas
+        $demoStudent = Student::create([
+            'name' => 'Alumno Demo',
+            'email' => 'alumno@demo.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $class = SchoolClass::first();
+        if ($class) {
+            $demoStudent->classes()->attach($class->id);
+        }
+
     }
 }

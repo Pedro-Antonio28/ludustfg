@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('total_seconds');
+            $table->date('exam_date');
             $table->foreignId('class_id')->constrained('classes')->cascadeOnDelete();
             $table->timestamps();
         });
-        
+
     }
 
     /**

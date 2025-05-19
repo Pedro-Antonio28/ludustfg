@@ -38,4 +38,10 @@ class Student extends Authenticatable
     {
         return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id');
     }
+
+    public function classes()
+    {
+        return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id');
+    }
+
 }

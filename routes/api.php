@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\DirectorAuthController;
 use App\Http\Controllers\Api\Auth\StudentAuthController;
 use App\Http\Controllers\Api\Auth\TeacherAuthController;
+use App\Http\Controllers\Api\Student\TestController;
 use App\Http\Controllers\Api\Student\ClassesController as SClassesController;
 use App\Http\Controllers\Api\Teacher\ClassesController as TClassesController;
 use App\Http\Middleware\EnsureRoleGuard;
@@ -27,9 +28,18 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':student',])->group(function () {
     Route::get('/dashboard', [SClassesController::class, 'index']);
+    Route::get('/class/{classId}/results',[SClassesController::class, 'results']);
 });
 
 Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher',])->group(function () {
     Route::get('/dashboard', [TClassesController::class, 'index']);
 });
+
+
+Route::middleware('auth:sanctum')->get('/student/classes/{id}/tests', [TestController::class, 'index']);
+
+
+
+
+
 
