@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('avg_seconds')->nullable();
             $table->timestamps();
         });
-        
+
     }
 
     /**

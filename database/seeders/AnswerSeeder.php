@@ -46,14 +46,14 @@ class AnswerSeeder extends Seeder
 
             case 'fill_blank':
                 return [
-                    'answers' => collect($question->answer)->map(fn($b) => $b['blanks'][0])->all()
+                    'answers' => collect($question->answer)->map(fn ($b) => $b['blanks'][0])->all(),
                 ];
 
             case 'fill_multiple':
                 return [
                     'answers' => collect($question->answer)->map(
-                        fn($blank) => $blank['options'][$blank['correct']]
-                    )->all()
+                        fn ($blank) => $blank['options'][$blank['correct']]
+                    )->all(),
                 ];
 
             default:
@@ -73,6 +73,7 @@ class AnswerSeeder extends Seeder
             case 'multiple':
                 $selected = collect($answer['selected'] ?? []);
                 $correct = collect($question->answer['correct'] ?? []);
+
                 return $selected->sort()->values()->all() === $correct->sort()->values()->all()
                     ? $totalMark : 0.0;
 
@@ -80,11 +81,11 @@ class AnswerSeeder extends Seeder
                 $correctPairs = collect($question->answer['pairs']);
                 $studentPairs = collect($answer['matches'] ?? []);
                 $total = $correctPairs->count();
-                $correctCount = $correctPairs->filter(fn($pair, $i) =>
-                    isset($studentPairs[$i]) &&
+                $correctCount = $correctPairs->filter(fn ($pair, $i) => isset($studentPairs[$i]) &&
                     $pair['left'] === $studentPairs[$i]['left'] &&
                     $pair['right'] === $studentPairs[$i]['right']
                 )->count();
+
                 return $total > 0 ? round(($correctCount / $total) * $totalMark, 2) : 0.0;
 
             case 'fill_blank':
@@ -94,17 +95,19 @@ class AnswerSeeder extends Seeder
                 $correctCount = $correctBlanks->filter(function ($val, $i) use ($studentAnswers) {
                     return isset($studentAnswers[$i]) && $val === $studentAnswers[$i];
                 })->count();
+
                 return $total > 0 ? round(($correctCount / $total) * $totalMark, 2) : 0.0;
 
             case 'fill_multiple':
                 $correctAnswers = collect($question->answer)->map(
-                    fn($b) => $b['options'][$b['correct']]
+                    fn ($b) => $b['options'][$b['correct']]
                 )->map('strtolower');
                 $studentAnswers = collect($answer['answers'] ?? [])->map('strtolower');
                 $total = $correctAnswers->count();
                 $correctCount = $correctAnswers->filter(function ($val, $i) use ($studentAnswers) {
                     return isset($studentAnswers[$i]) && $val === $studentAnswers[$i];
                 })->count();
+
                 return $total > 0 ? round(($correctCount / $total) * $totalMark, 2) : 0.0;
 
             case 'text':

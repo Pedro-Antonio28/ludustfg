@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class SchoolClassFactory extends Factory
 {
     protected $model = SchoolClass::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,7 +20,7 @@ class SchoolClassFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word . ' Class',
+            'name' => $this->faker->word.' Class',
             'image_url' => null,
         ];
     }
