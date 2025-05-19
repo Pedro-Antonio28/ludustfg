@@ -17,6 +17,17 @@ class ClassesController extends Controller
 
     }
 
+    public function show($id)
+    {
+        $student = auth()->user();
+
+        $class = $student->schoolClasses()
+            ->where('classes.id', $id)
+            ->firstOrFail();
+
+        return new StudentClassResource($class);
+    }
+
 
 
 
