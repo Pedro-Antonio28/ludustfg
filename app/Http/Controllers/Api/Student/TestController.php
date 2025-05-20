@@ -19,5 +19,6 @@ class TestController extends Controller
             ->select('id', 'title', 'exam_date', 'total_seconds')
             ->orderBy('exam_date')
             ->get();
+
     }
 }
