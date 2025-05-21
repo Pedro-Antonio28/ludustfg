@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('director_id')->nullable()->constrained('directors')->nullOnDelete();
             $table->timestamps();
         });
-        
+
     }
 
     /**

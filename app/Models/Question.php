@@ -15,7 +15,7 @@ class Question extends Model
         'test_id',
         'type',
         'answer',
-        'mark'
+        'mark',
     ];
 
     protected $casts = [

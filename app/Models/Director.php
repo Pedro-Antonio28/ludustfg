@@ -8,7 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Director extends Authenticatable
 {
-    use HasFactory, HasApiTokens;
+    use HasApiTokens, HasFactory;
 
     protected $fillable = [
         'name',
@@ -34,6 +34,4 @@ class Director extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-
 }

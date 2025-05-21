@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Student extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -34,6 +34,7 @@ class Student extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function schoolClasses()
     {
         return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id');
@@ -43,5 +44,4 @@ class Student extends Authenticatable
     {
         return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id');
     }
-
 }

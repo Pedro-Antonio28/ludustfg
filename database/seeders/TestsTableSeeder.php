@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Test;
 use App\Models\SchoolClass;
+use App\Models\Test;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class TestsTableSeeder extends Seeder
 {

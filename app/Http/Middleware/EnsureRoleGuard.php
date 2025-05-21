@@ -10,7 +10,7 @@ class EnsureRoleGuard
 {
     public function handle(Request $request, Closure $next, $guard)
     {
-        if (!Auth::guard($guard)->check()) {
+        if (! Auth::guard($guard)->check()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -19,4 +19,3 @@ class EnsureRoleGuard
         return $next($request);
     }
 }
-

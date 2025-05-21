@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\SchoolClass;
 
 class TestController extends Controller
 {

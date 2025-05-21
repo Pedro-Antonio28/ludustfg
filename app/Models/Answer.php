@@ -13,7 +13,7 @@ class Answer extends Model
         'answer',
         'student_id',
         'question_id',
-        'mark'
+        'mark',
     ];
 
     protected $casts = [

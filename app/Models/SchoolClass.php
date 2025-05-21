@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SchoolClass extends Model
 {
     use HasFactory;
+
     protected $table = 'classes';
+
     protected $fillable = [
         'name',
         'image_url',
@@ -28,5 +30,4 @@ class SchoolClass extends Model
     {
         return $this->hasMany(Test::class, 'class_id');
     }
-
 }
