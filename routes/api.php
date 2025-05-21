@@ -36,3 +36,7 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class.':t
 });
 
 Route::middleware('auth:sanctum')->get('/student/classes/{id}/tests', [TestController::class, 'index']);
+
+
+// routes/api.php
+Route::post('/student/join-class', [SClassesController::class, 'joinClass'])->middleware('auth:sanctum');

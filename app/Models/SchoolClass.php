@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class SchoolClass extends Model
 {
@@ -15,6 +16,13 @@ class SchoolClass extends Model
         'name',
         'image_url',
     ];
+
+    public function generateJoinCode()
+    {
+        $this->join_code = strtoupper(Str::random(6));
+        $this->join_code_expires_at = now()->addWeek();
+        $this->save();
+    }
 
     public function teacher()
     {
