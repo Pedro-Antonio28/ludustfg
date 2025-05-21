@@ -54,4 +54,18 @@ class ClassesController extends Controller
 
         return response()->json($examData);
     }
+  
+    public function activities($classId)
+    {
+        $student = auth()->user();
+
+        $class = $student->schoolClasses()
+            ->where('classes.id', $classId)
+            ->firstOrFail();
+
+        return $class->tests()
+            ->select('id', 'title', 'exam_date', 'total_seconds')
+            ->orderBy('exam_date')
+            ->get();
+    }
 }
