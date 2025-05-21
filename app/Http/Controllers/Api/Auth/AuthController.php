@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     public function logout(Request $request)
-{
-    $request->user()->currentAccessToken()->delete();
+    {
+        $request->user()->currentAccessToken()->delete();
 
-    return response(200);
-}
+        return response(200);
+    }
 }

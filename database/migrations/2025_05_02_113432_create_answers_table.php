@@ -19,7 +19,7 @@ return new class extends Migration
             $table->double('mark')->nullable();
             $table->timestamps();
         });
-        
+
     }
 
     /**

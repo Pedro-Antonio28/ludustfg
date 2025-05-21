@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Question;
 use App\Models\Test;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class QuestionSeeder extends Seeder
@@ -38,7 +37,7 @@ class QuestionSeeder extends Seeder
                 'name' => 'Explica el proceso de fotosíntesis',
                 'type' => 'text',
                 'mark' => 2.0,
-                'answer' => new \stdClass(),
+                'answer' => new \stdClass,
             ],
             [
                 'name' => 'Relaciona los países con sus capitales',

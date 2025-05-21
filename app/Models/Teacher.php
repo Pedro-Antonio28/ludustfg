@@ -8,7 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Teacher extends Authenticatable
 {
-    use HasFactory, HasApiTokens;
+    use HasApiTokens, HasFactory;
 
     protected $fillable = [
         'name',
@@ -26,7 +26,6 @@ class Teacher extends Authenticatable
      *
      * @return array<string, string>
      */
-
     protected function casts(): array
     {
         return [
@@ -34,11 +33,9 @@ class Teacher extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function schoolClasses()
     {
         return $this->hasMany(SchoolClass::class);
     }
-
-
-
 }
