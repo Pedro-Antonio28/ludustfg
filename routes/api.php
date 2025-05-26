@@ -25,14 +25,16 @@ Route::post('/directors/register', [DirectorAuthController::class, 'register']);
 
 Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class.':student'])->group(function () {
+Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':student'])->group(function () {
     Route::get('/dashboard', [SClassesController::class, 'index']);
     Route::get('/class/{classId}/activities', [SClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [SClassesController::class, 'results']);
 });
 
-Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class.':teacher'])->group(function () {
+Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher'])->group(function () {
     Route::get('/dashboard', [TClassesController::class, 'index']);
+    Route::get('/class/{classId}/activities', [TClassesController::class, 'activities']);
+    Route::get('/class/{classId}/results', [TClassesController::class, 'results']);
 });
 
 Route::middleware('auth:sanctum')->get('/student/classes/{id}/tests', [TestController::class, 'index']);
