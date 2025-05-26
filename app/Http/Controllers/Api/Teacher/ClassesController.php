@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
+use App\Models\SchoolClass;
 use App\Models\Test;
 use Illuminate\Support\Facades\Log;
 
@@ -96,5 +97,27 @@ class ClassesController extends Controller
         }
 
         return response()->json($examData);
+    }
+
+    public function generateJoinCode($classId)
+    {
+        $teacher = auth()->user();
+
+        $class = SchoolClass::where('id', $classId)
+            ->where('teacher_id', $teacher->id)
+            ->firstOrFail();
+
+        if (
+            !$class->join_code ||
+            !$class->join_code_expires_at ||
+            $class->join_code_expires_at->isPast()
+        ) {
+            $class->generateJoinCode();
+        }
+
+        return response()->json([
+            'code' => $class->join_code,
+            'expires_at' => $class->join_code_expires_at,
+        ]);
     }
 }

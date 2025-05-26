@@ -17,6 +17,10 @@ class SchoolClass extends Model
         'image_url',
     ];
 
+    protected $casts = [
+        'join_code_expires_at' => 'datetime',
+    ];
+
     public function generateJoinCode()
     {
         $this->join_code = strtoupper(Str::random(6));
