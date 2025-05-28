@@ -18,10 +18,9 @@ return new class extends Migration
             $table->foreignId('test_id')->nullable()->constrained('tests')->nullOnDelete();
             $table->text('type');
             $table->json('answer');
-            $table->double('mark');
+            $table->double('mark')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**

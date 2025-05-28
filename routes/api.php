@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\TeacherAuthController;
 use App\Http\Controllers\Api\Student\ClassesController as SClassesController;
 use App\Http\Controllers\Api\Student\TestController;
 use App\Http\Controllers\Api\Teacher\ClassesController as TClassesController;
+use App\Http\Controllers\Api\Teacher\QuestionController;
 use App\Http\Middleware\EnsureRoleGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,7 @@ Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
 
 Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher'])->group(function () {
     Route::get('/dashboard', [TClassesController::class, 'index']);
+    Route::get('/bank-questions', [QuestionController::class, 'indexBank']);
     Route::get('/class/{classId}/join-code', [TClassesController::class, 'generateJoinCode']);
     Route::get('/class/{classId}/activities', [TClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [TClassesController::class, 'results']);

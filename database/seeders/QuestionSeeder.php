@@ -89,5 +89,16 @@ class QuestionSeeder extends Seeder
                 'answer' => $q['answer'],
             ]);
         }
+
+        foreach ($questions as $index => $q) {
+            Question::create([
+                'name' => $q['name'],
+                'teacher_id' => 1,
+                'test_id' => null,
+                'type' => $q['type'],
+                'mark' => null,
+                'answer' => $q['answer'],
+            ]);
+        }
     }
 }
