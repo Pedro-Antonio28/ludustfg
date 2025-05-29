@@ -18,7 +18,7 @@ class QuestionResource extends JsonResource
             'id' => $this->id,
             'title' => $this->name,
             'type' => $this->type,
-            'tags' => [], // Añádelo si usas tags
+            'tags' => $this->tags->pluck('name')->toArray(),
             'createdAt' => $this->created_at->format('Y-m-d'),
         ];
 

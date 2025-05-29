@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Question;
+use App\Models\Tag;
 use App\Models\Test;
 use Illuminate\Database\Seeder;
 
@@ -14,6 +15,10 @@ class QuestionSeeder extends Seeder
     public function run(): void
     {
         $tests = Test::all();
+
+        $tagNames = ['Matemáticas', 'Lengua', 'Ciencias', 'Historia', 'Programación', 'Básico', 'Avanzado'];
+        $tags = collect($tagNames)->map(fn($name) => Tag::firstOrCreate(['name' => $name, 'teacher_id' => 1]));
+
         $questions = [
             [
                 'name' => '¿Cuál es la capital de Francia?',
@@ -91,7 +96,7 @@ class QuestionSeeder extends Seeder
         }
 
         foreach ($questions as $index => $q) {
-            Question::create([
+            $question = Question::create([
                 'name' => $q['name'],
                 'teacher_id' => 1,
                 'test_id' => null,
@@ -99,6 +104,9 @@ class QuestionSeeder extends Seeder
                 'mark' => null,
                 'answer' => $q['answer'],
             ]);
+
+            $randomTags = $tags->random(rand(1, 3))->pluck('id');
+            $question->tags()->syncWithoutDetaching($randomTags);
         }
     }
 }

@@ -12,6 +12,7 @@ class QuestionController extends Controller
     public function indexBank()
     {
         $questions = Question::whereNull('test_id')
+            ->with('tags')
             ->orderBy('created_at', 'desc')
             ->get();
 
