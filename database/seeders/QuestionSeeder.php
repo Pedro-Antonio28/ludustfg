@@ -56,7 +56,7 @@ class QuestionSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'El ___ es el satélite de la Tierra. Y su proclamador se llamaba ___.',
+                'name' => 'El [🔲1] es el satélite de la Tierra. Y su proclamador se llamaba [🔲2].',
                 'type' => 'fill_blank',
                 'mark' => 1.5,
                 'answer' => [
@@ -65,7 +65,7 @@ class QuestionSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'El ___ procesa los datos. Donde más se guardan cosas es en la ___.',
+                'name' => 'El [🔲1] procesa los datos. Donde más se guardan cosas es en la [🔲2].',
                 'type' => 'fill_multiple',
                 'mark' => 2.0,
                 'answer' => [
