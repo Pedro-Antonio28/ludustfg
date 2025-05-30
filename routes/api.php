@@ -36,6 +36,7 @@ Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
 Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher'])->group(function () {
     Route::get('/dashboard', [TClassesController::class, 'index']);
     Route::get('/bank-questions', [QuestionController::class, 'indexBank']);
+    Route::post('question', [QuestionController::class, 'store']);
     Route::get('/class/{classId}/join-code', [TClassesController::class, 'generateJoinCode']);
     Route::get('/class/{classId}/activities', [TClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [TClassesController::class, 'results']);

@@ -10,7 +10,8 @@ class Tag extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'teacher_id'
     ];
 
     public function questions()
