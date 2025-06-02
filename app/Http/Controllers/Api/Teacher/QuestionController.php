@@ -120,4 +120,104 @@ class QuestionController extends Controller
 
         return response()->noContent();
     }
+
+    public function update(Request $request, $questionId)
+    {
+        $question = Question::findOrFail($questionId);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|in:single,multiple,text,match,fill_blank,fill_multiple',
+            'answer' => [
+                'required_if:type,single,multiple,match,fill_blank,fill_multiple',
+                'array',
+            ],
+            'tags' => 'array',
+            'tags.*' => 'string|max:50',
+        ]);
+
+        $type = $validated['type'];
+        $answer = $validated['answer'] ?? null;
+
+        switch ($type) {
+            case 'single':
+                if (
+                    !isset($answer['correct'], $answer['options']) ||
+                    count($answer) !== 2 ||
+                    !is_int($answer['correct']) ||
+                    !is_array($answer['options']) ||
+                    count($answer['options']) < 2
+                ) {
+                    return response()->json(['error' => 'Formato estricto inválido para opción única.'], 422);
+                }
+                break;
+
+            case 'multiple':
+                if (
+                    !isset($answer['correct'], $answer['options']) ||
+                    count($answer) !== 2 ||
+                    !is_array($answer['correct']) ||
+                    !is_array($answer['options']) ||
+                    count($answer['options']) < 2 ||
+                    !collect($answer['correct'])->every(fn($i) => is_int($i))
+                ) {
+                    return response()->json(['error' => 'Formato estricto inválido para selección múltiple.'], 422);
+                }
+                break;
+
+            case 'text':
+                $validated['answer'] = new \stdClass();
+                break;
+
+            case 'match':
+                if (
+                    !isset($answer['pairs']) ||
+                    !is_array($answer['pairs']) ||
+                    count($answer['pairs']) < 2
+                ) {
+                    return response()->json(['error' => 'Formato inválido para emparejar.'], 422);
+                }
+                break;
+
+            case 'fill_blank':
+                if (
+                    !is_array($answer) ||
+                    count($answer) < 1 ||
+                    !collect($answer)->every(
+                        fn($blank) =>
+                        isset($blank['position'], $blank['blanks']) &&
+                            is_array($blank['blanks']) &&
+                            count($blank['blanks']) >= 1
+                    )
+                ) {
+                    return response()->json(['error' => 'Formato inválido para rellenar huecos.'], 422);
+                }
+                break;
+
+            case 'fill_multiple':
+                if (
+                    !is_array($answer) ||
+                    count($answer) < 1
+                ) {
+                    return response()->json(['error' => 'Formato inválido para huecos múltiples.'], 422);
+                }
+                break;
+        }
+
+        $question->update([
+            'name' => $validated['name'],
+            'type' => $validated['type'],
+            'answer' => $validated['answer'],
+        ]);
+
+        $tagIds = collect($validated['tags'])->map(function ($tagName) {
+            return Tag::firstOrCreate([
+                'name' => $tagName,
+                'teacher_id' => auth()->id(),
+            ])->id;
+        });
+
+        $question->tags()->sync($tagIds);
+
+        return response()->noContent();
+    }
 }
