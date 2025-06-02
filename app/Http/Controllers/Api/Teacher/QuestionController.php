@@ -220,4 +220,18 @@ class QuestionController extends Controller
 
         return response()->noContent();
     }
+
+    public function destroy($questionId)
+    {
+        $question = Question::findOrFail($questionId);
+        // Seguridad opcional: asegurarse de que el profesor solo pueda borrar sus propias preguntas
+        if ($question->teacher_id !== auth()->id()) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $question->tags()->detach();
+        $question->delete();
+
+        return response()->noContent();
+    }
 }

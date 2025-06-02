@@ -38,6 +38,7 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::get('/bank-questions', [QuestionController::class, 'indexBank']);
     Route::post('/question', [QuestionController::class, 'store']);
     Route::put('/question/{questionId}', [QuestionController::class, 'update']);
+    Route::delete('/question/{questionId}', [QuestionController::class, 'destroy']);
     Route::get('/class/{classId}/join-code', [TClassesController::class, 'generateJoinCode']);
     Route::get('/class/{classId}/activities', [TClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [TClassesController::class, 'results']);
