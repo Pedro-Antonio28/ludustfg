@@ -15,7 +15,7 @@ class QuestionController extends Controller
         $questions = Question::whereNull('test_id')
             ->with('tags')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(12);
 
         return QuestionResource::collection($questions);
     }
