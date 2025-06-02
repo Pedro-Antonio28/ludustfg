@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Question;
+use App\Models\Tag;
 use App\Models\Test;
 use Illuminate\Database\Seeder;
 
@@ -14,6 +15,10 @@ class QuestionSeeder extends Seeder
     public function run(): void
     {
         $tests = Test::all();
+
+        $tagNames = ['Matemáticas', 'Lengua', 'Ciencias', 'Historia', 'Programación', 'Básico', 'Avanzado'];
+        $tags = collect($tagNames)->map(fn($name) => Tag::firstOrCreate(['name' => $name, 'teacher_id' => 1]));
+
         $questions = [
             [
                 'name' => '¿Cuál es la capital de Francia?',
@@ -51,7 +56,7 @@ class QuestionSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'El ___ es el satélite de la Tierra. Y su proclamador se llamaba ___.',
+                'name' => 'El [🔲1] es el satélite de la Tierra. Y su proclamador se llamaba [🔲2].',
                 'type' => 'fill_blank',
                 'mark' => 1.5,
                 'answer' => [
@@ -60,7 +65,7 @@ class QuestionSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'El ___ procesa los datos. Donde más se guardan cosas es en la ___.',
+                'name' => 'El [🔲1] procesa los datos. Donde más se guardan cosas es en la [🔲2].',
                 'type' => 'fill_multiple',
                 'mark' => 2.0,
                 'answer' => [
@@ -88,6 +93,20 @@ class QuestionSeeder extends Seeder
                 'mark' => $q['mark'],
                 'answer' => $q['answer'],
             ]);
+        }
+
+        foreach ($questions as $index => $q) {
+            $question = Question::create([
+                'name' => $q['name'],
+                'teacher_id' => 1,
+                'test_id' => null,
+                'type' => $q['type'],
+                'mark' => null,
+                'answer' => $q['answer'],
+            ]);
+
+            $randomTags = $tags->random(rand(1, 3))->pluck('id');
+            $question->tags()->syncWithoutDetaching($randomTags);
         }
     }
 }

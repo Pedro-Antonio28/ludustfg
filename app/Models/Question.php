@@ -27,6 +27,11 @@ class Question extends Model
         return $this->hasMany(Answer::class);
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
     public function isCorrectAnswer($studentAnswer): ?bool
     {
         switch ($this->type) {
