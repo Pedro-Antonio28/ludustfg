@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('school_email')->unique();
             $table->string('school_tel');
             $table->string('school_type');
-            $table->date('membership_start');
+            $table->date('membership_start')->nullable();
             $table->timestamps();
         });
     }
