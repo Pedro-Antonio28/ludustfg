@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Student\TestController;
 use App\Http\Controllers\Api\Teacher\ClassesController as TClassesController;
 use App\Http\Controllers\Api\Director\ClassesController as DClassesController;
 use App\Http\Controllers\Api\Teacher\QuestionController;
+use App\Http\Controllers\Api\Teacher\TestTeacherController;
 use App\Http\Middleware\EnsureRoleGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,8 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::get('/class/{classId}/join-code', [TClassesController::class, 'generateJoinCode']);
     Route::get('/class/{classId}/activities', [TClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [TClassesController::class, 'results']);
+    Route::post('/test', [TestTeacherController::class, 'store']);
+    Route::post('/question/assign-test', [QuestionController::class, 'assignToTest']);
 });
 
 Route::prefix('director')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':director'])->group(function () {
