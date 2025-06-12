@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\TeacherAuthController;
 use App\Http\Controllers\Api\Student\ClassesController as SClassesController;
 use App\Http\Controllers\Api\Student\TestController;
 use App\Http\Controllers\Api\Teacher\ClassesController as TClassesController;
+use App\Http\Controllers\Api\Director\ClassesController as DClassesController;
 use App\Http\Controllers\Api\Teacher\QuestionController;
 use App\Http\Middleware\EnsureRoleGuard;
 use Illuminate\Http\Request;
@@ -22,7 +23,8 @@ Route::post('/student/login', [StudentAuthController::class, 'login']);
 Route::post('/teacher/register', [TeacherAuthController::class, 'register']);
 Route::post('/teacher/login', [TeacherAuthController::class, 'login']);
 
-Route::post('/directors/register', [DirectorAuthController::class, 'register']);
+Route::post('/director/register', [DirectorAuthController::class, 'register']);
+Route::post('/director/login', [DirectorAuthController::class, 'login']);
 
 Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -42,6 +44,10 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::get('/class/{classId}/join-code', [TClassesController::class, 'generateJoinCode']);
     Route::get('/class/{classId}/activities', [TClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [TClassesController::class, 'results']);
+});
+
+Route::prefix('director')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':director'])->group(function () {
+    Route::get('/dashboard', [DClassesController::class, 'index']);
 });
 
 Route::middleware('auth:sanctum')->get('/student/classes/{id}/tests', [TestController::class, 'index']);
