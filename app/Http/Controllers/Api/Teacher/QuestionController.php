@@ -118,7 +118,12 @@ class QuestionController extends Controller
 
         $question->tags()->sync($tagIds);
 
+        if (request()->has('return') && request()->input('return') === 'full') {
+            return response()->json($question, 201);
+        }
+
         return response()->noContent();
+
     }
 
     public function update(Request $request, $questionId)
@@ -234,4 +239,32 @@ class QuestionController extends Controller
 
         return response()->noContent();
     }
+
+    public function assignToTest(Request $request)
+    {
+        $request->validate([
+            'question_ids' => 'required|array',
+            'test_id' => 'required|exists:tests,id',
+        ]);
+
+        $teacherId = auth()->id();
+
+        \Log::info('Intentando asignar test a preguntas', [
+            'teacher_id' => $teacherId,
+            'question_ids' => $request->question_ids,
+            'test_id' => $request->test_id,
+        ]);
+
+        $affected = Question::whereIn('id', $request->question_ids)
+            ->where('teacher_id', $teacherId)
+            ->update(['test_id' => $request->test_id]);
+
+        \Log::info('Número de preguntas actualizadas', [
+            'actualizadas' => $affected,
+        ]);
+
+        return response()->json(['message' => 'Preguntas actualizadas']);
+    }
+
+
 }
