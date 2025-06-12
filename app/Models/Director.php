@@ -34,4 +34,9 @@ class Director extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function schoolClasses()
+    {
+        return $this->hasMany(SchoolClass::class);
+    }
 }

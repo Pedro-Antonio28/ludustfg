@@ -17,7 +17,6 @@ class ClassesController extends Controller
         $classes = $student->schoolClasses()->get();
 
         return StudentClassResource::collection($classes);
-
     }
 
     public function results($classId)
