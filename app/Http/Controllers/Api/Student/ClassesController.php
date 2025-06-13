@@ -30,17 +30,12 @@ class ClassesController extends Controller
                 $today = now()->startOfDay();
                 $notas = [];
 
-                Log::info("📘 Clase: {$class->name}");
-
                 foreach ($class->tests as $test) {
-                    $examDate = $test->exam_date ? \Carbon\Carbon::parse($test->exam_date) : now()->subDay();
+                    $examDate = $test->exam_date ? Carbon::parse($test->exam_date) : now()->subDay();
 
                     if ($examDate->greaterThan($today)) {
-                        Log::info("⏩ Test futuro ignorado: {$test->title} ({$examDate->toDateString()})");
                         continue;
                     }
-
-                    Log::info("✅ Test pasado: {$test->title} ({$examDate->toDateString()})");
 
                     $testTotal = 0;
                     $testMax = 0;
@@ -51,8 +46,6 @@ class ClassesController extends Controller
                         $answer = $question->answers->first();
                         $mark = $answer?->mark ?? 0;
                         $testTotal += $mark;
-
-                        Log::info("  ➤ Pregunta ({$question->id}) | Mark: {$question->mark} | Alumno: {$mark}");
                     }
 
                     $nota = $testMax > 0 ? round(($testTotal / $testMax) * 10, 2) : 0;
@@ -60,8 +53,6 @@ class ClassesController extends Controller
                 }
 
                 $average = count($notas) > 0 ? round(array_sum($notas) / count($notas), 2) : 0;
-
-                Log::info("📊 Resultado: Notas = [" . implode(', ', $notas) . "] => Media aritmética = {$average}");
 
                 $class->average_mark = $average;
 
@@ -99,7 +90,7 @@ class ClassesController extends Controller
                 'id' => $test->id,
                 'nombre' => $test->title ?? 'Examen',
                 'nota' => $nota,
-                'fecha' => $test->created_at->format('d M'),
+                'fecha' => $test->exam_date ? Carbon::parse($test->exam_date)->format('d M') : 'Sin fecha',
                 'tiempo' => rand(25, 40),
             ];
         }
