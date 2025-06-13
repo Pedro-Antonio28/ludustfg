@@ -4,10 +4,11 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\DirectorAuthController;
 use App\Http\Controllers\Api\Auth\StudentAuthController;
 use App\Http\Controllers\Api\Auth\TeacherAuthController;
+use App\Http\Controllers\Api\Director\ClassesController as DClassesController;
 use App\Http\Controllers\Api\Student\ClassesController as SClassesController;
 use App\Http\Controllers\Api\Student\TestController;
 use App\Http\Controllers\Api\Teacher\ClassesController as TClassesController;
-use App\Http\Controllers\Api\Director\ClassesController as DClassesController;
+use App\Http\Controllers\Api\Teacher\ClassMemberController;
 use App\Http\Controllers\Api\Teacher\QuestionController;
 use App\Http\Controllers\Api\Teacher\TestTeacherController;
 use App\Http\Middleware\EnsureRoleGuard;
@@ -34,6 +35,8 @@ Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::post('/join-class', [SClassesController::class, 'joinClass']);
     Route::get('/class/{classId}/activities', [SClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [SClassesController::class, 'results']);
+    Route::get('/class/{classId}/members', [ClassMemberController::class, 'index']);
+
 });
 
 Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher'])->group(function () {
@@ -49,6 +52,8 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::post('/question/assign-test', [QuestionController::class, 'assignToTest']);
     Route::get('/test/{testId}', [TestTeacherController::class, 'show']);
     Route::put('/test/{testId}', [TestTeacherController::class, 'update']);
+    Route::get('/class/{classId}/members', [ClassMemberController::class, 'index']);
+    Route::delete('/class/{classId}/member/{studentId}', [ClassMemberController::class, 'destroy']);
 
 });
 
