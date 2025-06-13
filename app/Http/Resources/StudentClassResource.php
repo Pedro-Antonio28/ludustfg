@@ -17,6 +17,7 @@ class StudentClassResource extends JsonResource
         return [
             'id' => $this->id,
             'class_name' => $this->name,
+            'color' => $this->color
         ];
     }
 }
