@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
 use App\Models\SchoolClass;
 use App\Models\Test;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ClassesController extends Controller
 {
@@ -15,9 +15,47 @@ class ClassesController extends Controller
     {
         $teacher = auth()->user();
 
-        $classes = $teacher->schoolClasses()->paginate(6);
+        $today = now()->startOfDay();
 
-        return StudentClassResource::collection($classes);
+        $classes = $teacher->schoolClasses()
+            ->with([
+                'tests.questions.answers'
+            ])
+            ->paginate(6);
+
+        return StudentClassResource::collection(
+            $classes->through(function ($class) use ($today) {
+                $notas = [];
+
+                foreach ($class->tests as $test) {
+                    $examDate = $test->exam_date ? Carbon::parse($test->exam_date)->startOfDay() : null;
+
+                    // Ignorar exámenes de hoy o futuros
+                    if ($examDate && $examDate->greaterThanOrEqualTo($today)) {
+                        continue;
+                    }
+
+                    $total = 0;
+                    $max = 0;
+
+                    foreach ($test->questions as $question) {
+                        foreach ($question->answers as $answer) {
+                            $max += $question->mark;
+                            if ($question->isCorrectAnswer($answer->answer)) {
+                                $total += $question->mark;
+                            }
+                        }
+                    }
+
+                    $nota = $max > 0 ? round(($total / $max) * 10, 2) : 0;
+                    $notas[] = $nota;
+                }
+
+                $class->average_mark = count($notas) > 0 ? round(array_sum($notas) / count($notas), 2) : 0;
+
+                return $class;
+            })
+        );
     }
 
     public function activities($classId)
@@ -36,19 +74,26 @@ class ClassesController extends Controller
 
     public function results($classId)
     {
+        $today = now()->startOfDay();
+
         $tests = Test::with(['questions.answers'])
             ->where('class_id', $classId)
             ->get();
 
         $examData = [];
-        Log::info('test', $tests->toArray());
 
         foreach ($tests as $test) {
+            $examDate = $test->exam_date ? \Carbon\Carbon::parse($test->exam_date)->startOfDay() : null;
+
+            // Ignorar exámenes futuros
+            if ($examDate && $examDate->greaterThanOrEqualTo($today)) {
+                continue;
+            }
+
             $questions = $test->questions;
             $studentScores = [];
             $studentTimes = [];
 
-            // Agrupar respuestas por estudiante
             $answersGroupedByStudent = [];
 
             foreach ($questions as $question) {
@@ -60,7 +105,6 @@ class ClassesController extends Controller
                 }
             }
 
-            // Calcular nota por estudiante
             foreach ($answersGroupedByStudent as $studentId => $entries) {
                 $total = 0;
                 $max = 0;
@@ -74,12 +118,9 @@ class ClassesController extends Controller
 
                 $notaEstudiante = $max > 0 ? ($total / $max) * 10 : 0;
                 $studentScores[] = round($notaEstudiante, 2);
-
-                // Simulamos tiempo con rand si no hay tiempo real
                 $studentTimes[] = rand(25, 40);
             }
 
-            // Media total
             $mediaNotas = count($studentScores) > 0
                 ? round(array_sum($studentScores) / count($studentScores), 2)
                 : 0;
