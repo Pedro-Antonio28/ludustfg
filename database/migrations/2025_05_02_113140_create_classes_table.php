@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->cascadeOnDelete();
-            $table->foreignId('director_id')->nullable()->constrained('directors')->cascadeOnDelete();
-            $table->text('image_url')->nullable();
+            $table->string('color')->nullable();
             $table->string('join_code')->nullable()->unique();
             $table->timestamp('join_code_expires_at')->nullable();
             $table->timestamps();
