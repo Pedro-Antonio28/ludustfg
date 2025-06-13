@@ -20,8 +20,8 @@ class SchoolClassFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word.' Class',
-            'image_url' => null,
+            'name' => $this->faker->word . ' Class',
+            'color' => "#980ffa",
         ];
     }
 }
