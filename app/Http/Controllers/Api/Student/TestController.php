@@ -29,7 +29,7 @@ class TestController extends Controller
         return response()->json([
             'id' => $test->id,
             'title' => $test->title,
-            'duration' => $test->duration ?? 3600, // en segundos
+            'duration' => $test->total_seconds ?? 3600, // en segundos
             'questions' => QuestionResource::collection($test->questions),
         ]);
     }
