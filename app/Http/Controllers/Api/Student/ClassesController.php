@@ -64,6 +64,7 @@ class ClassesController extends Controller
     public function results($classId)
     {
         $student = auth()->user();
+        $today = now()->startOfDay();
 
         $tests = Test::with(['questions.answers' => function ($q) use ($student) {
             $q->where('student_id', $student->id);
@@ -74,6 +75,10 @@ class ClassesController extends Controller
         $examData = [];
 
         foreach ($tests as $test) {
+            $examDate = $test->exam_date ? Carbon::parse($test->exam_date)->startOfDay() : null;
+            if ($examDate && $examDate->greaterThanOrEqualTo($today)) {
+                continue;
+            }
             $questions = $test->questions;
 
             $totalMark = 0;
