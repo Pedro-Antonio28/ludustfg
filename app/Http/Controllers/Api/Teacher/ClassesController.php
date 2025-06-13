@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
 use App\Models\SchoolClass;
 use App\Models\Test;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ClassesController extends Controller
@@ -119,5 +120,26 @@ class ClassesController extends Controller
             'code' => $class->join_code,
             'expires_at' => $class->join_code_expires_at,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'color' => 'nullable|string|max:255',
+        ]);
+
+        $teacher = auth()->user();
+
+        $class = SchoolClass::create([
+            'name' => $validated['name'],
+            'color' => $validated['color'] ?? null,
+            'teacher_id' => $teacher->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Clase creada correctamente',
+            'class' => $class,
+        ], 201);
     }
 }
