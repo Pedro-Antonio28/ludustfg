@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
 use App\Models\SchoolClass;
 use App\Models\Test;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClassesController extends Controller
 {
@@ -14,28 +16,58 @@ class ClassesController extends Controller
     {
         $student = auth()->user();
 
-        $classes = $student->schoolClasses()->with(['tests.questions.answers' => function ($q) use ($student) {
-            $q->where('student_id', $student->id);
-        }])->get();
-
-        return StudentClassResource::collection($classes->map(function ($class) use ($student) {
-            $tests = $class->tests;
-
-            $totalMark = 0;
-            $maxMark = 0;
-
-            foreach ($tests as $test) {
-                foreach ($test->questions as $question) {
-                    $answer = $question->answers->first(); // única respuesta del alumno
-                    $maxMark += $question->mark;
-                    $totalMark += $answer?->mark ?? 0;
+        $classes = $student->schoolClasses()
+            ->with([
+                'tests.questions',
+                'tests.questions.answers' => function ($q) use ($student) {
+                    $q->where('student_id', $student->id);
                 }
-            }
+            ])
+            ->get();
 
-            $class->average_mark = $maxMark > 0 ? round(($totalMark / $maxMark) * 10, 2) : null;
+        return StudentClassResource::collection(
+            $classes->map(function ($class) use ($student) {
+                $today = now()->startOfDay();
+                $notas = [];
 
-            return $class;
-        }));
+                Log::info("📘 Clase: {$class->name}");
+
+                foreach ($class->tests as $test) {
+                    $examDate = $test->exam_date ? \Carbon\Carbon::parse($test->exam_date) : now()->subDay();
+
+                    if ($examDate->greaterThan($today)) {
+                        Log::info("⏩ Test futuro ignorado: {$test->title} ({$examDate->toDateString()})");
+                        continue;
+                    }
+
+                    Log::info("✅ Test pasado: {$test->title} ({$examDate->toDateString()})");
+
+                    $testTotal = 0;
+                    $testMax = 0;
+
+                    foreach ($test->questions as $question) {
+                        $questionMark = is_numeric($question->mark) ? (float) $question->mark : 1;
+                        $testMax += $questionMark;
+                        $answer = $question->answers->first();
+                        $mark = $answer?->mark ?? 0;
+                        $testTotal += $mark;
+
+                        Log::info("  ➤ Pregunta ({$question->id}) | Mark: {$question->mark} | Alumno: {$mark}");
+                    }
+
+                    $nota = $testMax > 0 ? round(($testTotal / $testMax) * 10, 2) : 0;
+                    $notas[] = $nota;
+                }
+
+                $average = count($notas) > 0 ? round(array_sum($notas) / count($notas), 2) : 0;
+
+                Log::info("📊 Resultado: Notas = [" . implode(', ', $notas) . "] => Media aritmética = {$average}");
+
+                $class->average_mark = $average;
+
+                return $class;
+            })
+        );
     }
 
     public function results($classId)
