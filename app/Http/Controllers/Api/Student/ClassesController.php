@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
 use App\Models\SchoolClass;
 use App\Models\Test;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClassesController extends Controller
 {
@@ -14,14 +16,55 @@ class ClassesController extends Controller
     {
         $student = auth()->user();
 
-        $classes = $student->schoolClasses()->get();
+        $classes = $student->schoolClasses()
+            ->with([
+                'tests.questions',
+                'tests.questions.answers' => function ($q) use ($student) {
+                    $q->where('student_id', $student->id);
+                }
+            ])
+            ->get();
 
-        return StudentClassResource::collection($classes);
+        return StudentClassResource::collection(
+            $classes->map(function ($class) use ($student) {
+                $today = now()->startOfDay();
+                $notas = [];
+
+                foreach ($class->tests as $test) {
+                    $examDate = $test->exam_date ? Carbon::parse($test->exam_date) : now()->subDay();
+
+                    if ($examDate->greaterThan($today)) {
+                        continue;
+                    }
+
+                    $testTotal = 0;
+                    $testMax = 0;
+
+                    foreach ($test->questions as $question) {
+                        $questionMark = is_numeric($question->mark) ? (float) $question->mark : 1;
+                        $testMax += $questionMark;
+                        $answer = $question->answers->first();
+                        $mark = $answer?->mark ?? 0;
+                        $testTotal += $mark;
+                    }
+
+                    $nota = $testMax > 0 ? round(($testTotal / $testMax) * 10, 2) : 0;
+                    $notas[] = $nota;
+                }
+
+                $average = count($notas) > 0 ? round(array_sum($notas) / count($notas), 2) : 0;
+
+                $class->average_mark = $average;
+
+                return $class;
+            })
+        );
     }
 
     public function results($classId)
     {
         $student = auth()->user();
+        $today = now()->startOfDay();
 
         $tests = Test::with(['questions.answers' => function ($q) use ($student) {
             $q->where('student_id', $student->id);
@@ -32,6 +75,10 @@ class ClassesController extends Controller
         $examData = [];
 
         foreach ($tests as $test) {
+            $examDate = $test->exam_date ? Carbon::parse($test->exam_date)->startOfDay() : null;
+            if ($examDate && $examDate->greaterThanOrEqualTo($today)) {
+                continue;
+            }
             $questions = $test->questions;
 
             $totalMark = 0;
@@ -48,7 +95,7 @@ class ClassesController extends Controller
                 'id' => $test->id,
                 'nombre' => $test->title ?? 'Examen',
                 'nota' => $nota,
-                'fecha' => $test->created_at->format('d M'),
+                'fecha' => $test->exam_date ? Carbon::parse($test->exam_date)->format('d M') : 'Sin fecha',
                 'tiempo' => rand(25, 40),
             ];
         }
