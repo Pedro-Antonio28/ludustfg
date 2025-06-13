@@ -14,9 +14,28 @@ class ClassesController extends Controller
     {
         $student = auth()->user();
 
-        $classes = $student->schoolClasses()->get();
+        $classes = $student->schoolClasses()->with(['tests.questions.answers' => function ($q) use ($student) {
+            $q->where('student_id', $student->id);
+        }])->get();
 
-        return StudentClassResource::collection($classes);
+        return StudentClassResource::collection($classes->map(function ($class) use ($student) {
+            $tests = $class->tests;
+
+            $totalMark = 0;
+            $maxMark = 0;
+
+            foreach ($tests as $test) {
+                foreach ($test->questions as $question) {
+                    $answer = $question->answers->first(); // única respuesta del alumno
+                    $maxMark += $question->mark;
+                    $totalMark += $answer?->mark ?? 0;
+                }
+            }
+
+            $class->average_mark = $maxMark > 0 ? round(($totalMark / $maxMark) * 10, 2) : null;
+
+            return $class;
+        }));
     }
 
     public function results($classId)
