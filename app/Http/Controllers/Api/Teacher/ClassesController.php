@@ -15,7 +15,7 @@ class ClassesController extends Controller
     {
         $teacher = auth()->user();
 
-        $classes = $teacher->schoolClasses()->get();
+        $classes = $teacher->schoolClasses()->paginate(6);
 
         return StudentClassResource::collection($classes);
     }
@@ -137,9 +137,6 @@ class ClassesController extends Controller
             'teacher_id' => $teacher->id,
         ]);
 
-        return response()->json([
-            'message' => 'Clase creada correctamente',
-            'class' => $class,
-        ], 201);
+        return response()->noContent(201);
     }
 }
