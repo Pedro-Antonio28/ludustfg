@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('total_seconds');
             $table->date('exam_date');
             $table->foreignId('class_id')->constrained('classes')->cascadeOnDelete();
+            $table->boolean('is_published')->default(false);
             $table->timestamps();
         });
-
     }
 
     /**

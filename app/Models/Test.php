@@ -14,6 +14,7 @@ class Test extends Model
         'total_seconds',
         'exam_date',
         'class_id',
+        'is_published'
     ];
 
     public function class()
