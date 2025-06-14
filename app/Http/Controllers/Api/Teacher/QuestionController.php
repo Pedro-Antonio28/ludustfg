@@ -264,6 +264,7 @@ class QuestionController extends Controller
                 'mark',
                 'teacher_id'
             ]));
+            $copy->mark = 1;
             $copy->test_id = $testId;
             $copy->save();
 

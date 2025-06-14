@@ -18,5 +18,6 @@ class Answer extends Model
 
     protected $casts = [
         'answer' => 'array',
+        'mark' => 'float',
     ];
 }
