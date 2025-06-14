@@ -20,6 +20,7 @@ class Question extends Model
 
     protected $casts = [
         'answer' => 'array',
+        'mark' => 'float',
     ];
 
     public function answers()
@@ -34,39 +35,57 @@ class Question extends Model
 
     public function isCorrectAnswer($studentAnswer): ?bool
     {
+        if ($studentAnswer instanceof \stdClass) {
+            $studentAnswer = (array) $studentAnswer;
+        }
+        $normalize = fn($val) => strtolower(trim((string) $val));
+
         switch ($this->type) {
             case 'single':
                 return ($studentAnswer['selected'] ?? null) === ($this->answer['correct'] ?? null);
 
             case 'multiple':
-                $selected = collect($studentAnswer['selected'] ?? []);
-                $correct = collect($this->answer['correct'] ?? []);
-                return $selected->sort()->values()->all() === $correct->sort()->values()->all();
+                $selected = collect($studentAnswer['selected'] ?? [])->sort()->values();
+                $correct = collect($this->answer['correct'] ?? [])->sort()->values();
+                return $selected->all() === $correct->all();
 
             case 'match':
                 $correctPairs = collect($this->answer['pairs'] ?? []);
                 $studentPairs = collect($studentAnswer['matches'] ?? []);
-                return $correctPairs->count() > 0 &&
-                    $correctPairs->values()->all() === $studentPairs->values()->all();
+
+                if ($correctPairs->count() !== $studentPairs->count()) return false;
+
+                return $correctPairs->every(function ($correctPair) use ($studentPairs, $normalize) {
+                    return $studentPairs->contains(function ($studentPair) use ($correctPair, $normalize) {
+                        return $normalize($studentPair['left'] ?? '') === $normalize($correctPair['left'] ?? '') &&
+                            $normalize($studentPair['right'] ?? '') === $normalize($correctPair['right'] ?? '');
+                    });
+                });
 
             case 'fill_blank':
-                $correct = collect($this->answer)->pluck('blanks')->flatten()->map('strtolower');
-                $student = collect($studentAnswer['answers'] ?? [])->map('strtolower');
+                $correctBlanks = collect($this->answer)
+                    ->pluck('blanks')
+                    ->flatten()
+                    ->map($normalize);
 
-                return $correct->count() > 0 &&
-                    $correct->values()->all() === $student->values()->all();
+                $studentAnswers = collect($studentAnswer['answers'] ?? [])->map($normalize);
+
+                if ($correctBlanks->count() !== $studentAnswers->count()) return false;
+
+                return $correctBlanks->values()->all() === $studentAnswers->values()->all();
 
             case 'fill_multiple':
                 $correct = collect($this->answer)->map(
-                    fn($b) => strtolower($b['options'][$b['correct']])
+                    fn($b) => $normalize($b['options'][$b['correct']] ?? '')
                 );
-                $student = collect($studentAnswer['answers'] ?? [])->map('strtolower');
+                $student = collect($studentAnswer['answers'] ?? [])->map($normalize);
 
-                return $correct->count() > 0 &&
-                    $correct->values()->all() === $student->values()->all();
+                if ($correct->count() !== $student->count()) return false;
+
+                return $correct->values()->all() === $student->values()->all();
 
             case 'text':
-                return null; // revisión manual
+                return null; // requiere corrección manual
 
             default:
                 return null;

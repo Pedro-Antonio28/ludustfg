@@ -36,7 +36,8 @@ Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::get('/class/{classId}/activities', [SClassesController::class, 'activities']);
     Route::get('/class/{classId}/results', [SClassesController::class, 'results']);
     Route::get('/class/{classId}/members', [ClassMemberController::class, 'index']);
-
+    Route::get('/class/{classId}/exam/{testId}', [TestController::class, 'edit']);
+    Route::post('/class/{classId}/exam/{testId}/submit', [TestController::class, 'update']);
 });
 
 Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher'])->group(function () {
@@ -55,7 +56,6 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::put('/test/{testId}', [TestTeacherController::class, 'update']);
     Route::get('/class/{classId}/members', [ClassMemberController::class, 'index']);
     Route::delete('/class/{classId}/member/{studentId}', [ClassMemberController::class, 'destroy']);
-
 });
 
 Route::prefix('director')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':director'])->group(function () {

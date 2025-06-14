@@ -15,6 +15,7 @@ class TestTeacherController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'state' => 'required|boolean',
             'total_seconds' => 'required|string',
             'exam_date' => 'required|date',
             'class_id' => 'required|exists:classes,id',
@@ -27,6 +28,7 @@ class TestTeacherController extends Controller
             'total_seconds' => $validated['total_seconds'],
             'exam_date' => $validated['exam_date'],
             'class_id' => $validated['class_id'],
+            'is_published' => $validated['state'],
         ]);
 
         // Asociar preguntas al examen
@@ -65,10 +67,11 @@ class TestTeacherController extends Controller
 
         $validated = $request->validate([
             'title'         => 'required|string|max:255',
+            'state'         => 'required|boolean',
             'exam_date'     => 'required|date',
             'total_seconds' => 'required|string',
             'question_ids'  => 'nullable|array',
-            'question_ids.*'=> 'exists:questions,id'
+            'question_ids.*' => 'exists:questions,id'
         ]);
 
         // Actualizar datos básicos
@@ -76,6 +79,7 @@ class TestTeacherController extends Controller
             'title'         => $validated['title'],
             'exam_date'     => $validated['exam_date'],
             'total_seconds' => $validated['total_seconds'],
+            'is_published'         => $validated['state'],
         ]);
 
         $newIds = $validated['question_ids'] ?? [];

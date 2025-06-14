@@ -123,7 +123,6 @@ class QuestionController extends Controller
         }
 
         return response()->noContent();
-
     }
 
     public function update(Request $request, $questionId)
@@ -248,23 +247,32 @@ class QuestionController extends Controller
         ]);
 
         $teacherId = auth()->id();
+        $testId = $request->test_id;
+        $questionIds = $request->question_ids;
 
-        \Log::info('Intentando asignar test a preguntas', [
-            'teacher_id' => $teacherId,
-            'question_ids' => $request->question_ids,
-            'test_id' => $request->test_id,
-        ]);
-
-        $affected = Question::whereIn('id', $request->question_ids)
+        $questions = Question::whereIn('id', $questionIds)
             ->where('teacher_id', $teacherId)
-            ->update(['test_id' => $request->test_id]);
+            ->whereNull('test_id')
+            ->get();
 
-        \Log::info('Número de preguntas actualizadas', [
-            'actualizadas' => $affected,
-        ]);
+        foreach ($questions as $question) {
+            $copy = new Question();
+            $copy->fill($question->only([
+                'name',
+                'type',
+                'answer',
+                'mark',
+                'teacher_id'
+            ]));
+            $copy->mark = 1;
+            $copy->test_id = $testId;
+            $copy->save();
+
+            if ($question->tags()->count()) {
+                $copy->tags()->attach($question->tags->pluck('id')->toArray());
+            }
+        }
 
         return response()->json(['message' => 'Preguntas actualizadas']);
     }
-
-
 }

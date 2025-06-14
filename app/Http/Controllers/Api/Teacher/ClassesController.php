@@ -67,7 +67,7 @@ class ClassesController extends Controller
             ->firstOrFail();
 
         return $class->tests()
-            ->select('id', 'title', 'exam_date', 'total_seconds')
+            ->select('id', 'title', 'exam_date', 'total_seconds', 'is_published')
             ->orderBy('exam_date')
             ->get();
     }

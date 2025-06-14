@@ -14,6 +14,11 @@ class Test extends Model
         'total_seconds',
         'exam_date',
         'class_id',
+        'is_published'
+    ];
+
+    protected $casts = [
+        'state' => 'boolean',
     ];
 
     public function class()
@@ -24,5 +29,10 @@ class Test extends Model
     public function questions()
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function attempts()
+    {
+        return $this->hasMany(\App\Models\Attempt::class);
     }
 }
