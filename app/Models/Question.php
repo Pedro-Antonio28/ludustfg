@@ -35,6 +35,9 @@ class Question extends Model
 
     public function isCorrectAnswer($studentAnswer): ?bool
     {
+        if ($studentAnswer instanceof \stdClass) {
+            $studentAnswer = (array) $studentAnswer;
+        }
         $normalize = fn($val) => strtolower(trim((string) $val));
 
         switch ($this->type) {

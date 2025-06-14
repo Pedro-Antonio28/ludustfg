@@ -49,6 +49,9 @@ class TestController extends Controller
         ]);
 
         foreach ($data['answers'] as $questionId => $rawAnswer) {
+            if (is_null($rawAnswer) || $rawAnswer === '' || $rawAnswer === [] || $rawAnswer === '{}') {
+                $rawAnswer = null;
+            }
             $question = Question::find($questionId);
             if (!$question) continue;
 
@@ -87,7 +90,7 @@ class TestController extends Controller
             Answer::create([
                 'student_id' => auth()->id(),
                 'question_id' => $questionId,
-                'answer' => $formattedAnswer,
+                'answer' => is_array($formattedAnswer) ? $formattedAnswer : new stdClass,
                 'mark' => $mark,
             ]);
         }
