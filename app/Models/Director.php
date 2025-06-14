@@ -39,4 +39,10 @@ class Director extends Authenticatable
     {
         return $this->hasMany(SchoolClass::class);
     }
+
+    // En el modelo User (cuando actúa como Director)
+    public function teachers()
+    {
+        return $this->hasMany(Teacher::class, 'director_id');
+    }
 }
