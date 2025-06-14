@@ -14,10 +14,15 @@ class ClassesController extends Controller
     {
         $director = auth()->user();
 
-        $classes = $director->schoolClasses()->get();
+        // Obtener IDs de los profesores del director
+        $teacherIds = $director->teachers()->pluck('id');
+
+        // Obtener todas las clases de esos profesores
+        $classes = SchoolClass::whereIn('teacher_id', $teacherIds)->get();
 
         return StudentClassResource::collection($classes);
     }
+
 
     public function activities($classId)
     {

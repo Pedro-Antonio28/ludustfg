@@ -54,9 +54,9 @@ class StudentClassWithTestSeeder extends Seeder
         }
 
         $exams = [
-            ['title' => 'Matemáticas', 'exam_date' => Carbon::now()->addDays(5)],
-            ['title' => 'Historia', 'exam_date' => Carbon::now()->addDays(10)],
-            ['title' => 'Inglés', 'exam_date' => Carbon::now()->addDays(15)],
+            ['title' => 'Matemáticas', 'exam_date' => Carbon::now()->subDays(5)],
+            ['title' => 'Historia', 'exam_date' => Carbon::now()->subDays(10)],
+            ['title' => 'Inglés', 'exam_date' => Carbon::now()->subDays(15)],
         ];
 
         $questionTemplates = [

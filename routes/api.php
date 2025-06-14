@@ -43,10 +43,9 @@ Route::prefix('student')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::post('/class/{classId}/exam/{testId}/submit', [TestController::class, 'update']);
     Route::get('/profile', [StudentProfileController::class, 'show']);
     Route::put('/profile', [StudentProfileController::class, 'update']);
-
 });
 
-Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':teacher'])->group(function () {
+Route::prefix('teacher')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/dashboard', [TClassesController::class, 'index']);
     Route::get('/bank-questions', [QuestionController::class, 'indexBank']);
     Route::post('/question', [QuestionController::class, 'store']);
