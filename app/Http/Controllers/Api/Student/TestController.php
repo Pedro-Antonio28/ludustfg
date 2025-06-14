@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuestionResource;
 use App\Models\Answer;
+use App\Models\Attempt;
 use App\Models\Question;
 use App\Models\Test;
 use Illuminate\Http\Request;
@@ -46,6 +47,24 @@ class TestController extends Controller
         $data = $request->validate([
             'answers' => 'required|array',
             'time_remaining' => 'required|integer',
+        ]);
+
+        $studentId = auth()->id();
+
+        // 🚫 Verificar si ya existe un intento
+        $existing = Attempt::where('student_id', $studentId)
+            ->where('test_id', $testId)
+            ->first();
+
+        if ($existing) {
+            return response()->json(['error' => 'Ya has realizado este examen.'], 403);
+        }
+
+        // ✅ Registrar el primer intento
+        Attempt::create([
+            'student_id' => $studentId,
+            'test_id' => $testId,
+            'attempt_number' => 0,
         ]);
 
         foreach ($data['answers'] as $questionId => $rawAnswer) {

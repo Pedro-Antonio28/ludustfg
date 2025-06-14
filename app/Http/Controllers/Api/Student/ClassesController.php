@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentClassResource;
+use App\Models\Attempt;
 use App\Models\SchoolClass;
 use App\Models\Test;
 use Illuminate\Http\Request;
@@ -64,10 +65,22 @@ class ClassesController extends Controller
             ->where('classes.id', $classId)
             ->firstOrFail();
 
-        return $class->tests()
+        $tests = $class->tests()
             ->select('id', 'title', 'exam_date', 'total_seconds', 'is_published')
             ->orderBy('exam_date')
             ->get();
+
+        $attempts = Attempt::where('student_id', $student->id)
+            ->whereIn('test_id', $tests->pluck('id'))
+            ->get()
+            ->keyBy('test_id');
+
+        $tests->transform(function ($test) use ($attempts) {
+            $test->has_attempt = $attempts->has($test->id);
+            return $test;
+        });
+
+        return $tests;
     }
 
     public function joinClass(Request $request)
