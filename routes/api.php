@@ -65,7 +65,9 @@ Route::prefix('teacher')->middleware(['auth:sanctum', EnsureRoleGuard::class . '
     Route::get('/profile', [TeacherProfileController::class, 'show']);
     Route::get('/tests', [TeacherProfileController::class, 'index']);
     Route::put('/profile', [TeacherProfileController::class, 'update']);
-
+    Route::get('/test/{testId}/submissions', [TestTeacherController::class, 'submissions']);
+    Route::get('/test/{testId}/submissions/{studentId}', [TestTeacherController::class, 'submissionDetail']);
+    Route::post('/test/{test}/submissions/{student}/grade', [TestTeacherController::class, 'gradeSubmission']);
 });
 
 Route::prefix('director')->middleware(['auth:sanctum', EnsureRoleGuard::class . ':director'])->group(function () {
