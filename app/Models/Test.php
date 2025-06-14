@@ -17,6 +17,10 @@ class Test extends Model
         'is_published'
     ];
 
+    protected $casts = [
+        'state' => 'boolean',
+    ];
+
     public function class()
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');
