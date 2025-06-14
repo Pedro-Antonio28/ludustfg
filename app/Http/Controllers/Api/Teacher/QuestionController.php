@@ -241,38 +241,42 @@ class QuestionController extends Controller
 
     public function assignToTest(Request $request)
     {
-        $request->validate([
-            'question_ids' => 'required|array',
+        $validated = $request->validate([
+            'questions' => 'required|array',
+            'questions.*.id' => 'required|exists:questions,id',
+            'questions.*.mark' => 'required|numeric|min:0',
             'test_id' => 'required|exists:tests,id',
         ]);
 
         $teacherId = auth()->id();
-        $testId = $request->test_id;
-        $questionIds = $request->question_ids;
+        $testId = $validated['test_id'];
+        $questionInputs = $validated['questions'];
 
-        $questions = Question::whereIn('id', $questionIds)
-            ->where('teacher_id', $teacherId)
-            ->whereNull('test_id')
-            ->get();
+        foreach ($questionInputs as $input) {
+            $original = Question::where('id', $input['id'])
+                ->where('teacher_id', $teacherId)
+                ->whereNull('test_id')
+                ->first();
 
-        foreach ($questions as $question) {
+            if (!$original) continue;
+
             $copy = new Question();
-            $copy->fill($question->only([
+            $copy->fill($original->only([
                 'name',
                 'type',
                 'answer',
-                'mark',
-                'teacher_id'
+                'teacher_id',
             ]));
-            $copy->mark = 1;
+            $copy->mark = $input['mark'];
             $copy->test_id = $testId;
             $copy->save();
 
-            if ($question->tags()->count()) {
-                $copy->tags()->attach($question->tags->pluck('id')->toArray());
+            if ($original->tags()->count()) {
+                $copy->tags()->attach($original->tags->pluck('id')->toArray());
             }
         }
 
-        return response()->json(['message' => 'Preguntas actualizadas']);
+        return response()->json(['message' => 'Preguntas asignadas al examen correctamente.']);
     }
+
 }
